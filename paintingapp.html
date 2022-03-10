@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, 
+initial-scale=1.0" />
+<style>
+.clrnsve{
+    position:relative;
+
+}
+.colors{
+    position:relative;
+    top: 2em;
+    display: flex;
+    justify-content: space-evenly;
+}
+.colorbox{
+    height:50px;
+    width:50px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+canvas{
+    background: grey;
+    position:relative;
+    top:5em;
+}
+button{
+    padding: 2em;
+    margin: 2em;
+    font-size: 1em;
+    font-weight:bolder;
+    border: solid grey;
+    cursor: pointer;
+}
+button:hover{
+    background-color: grey;
+}
+</style>
+</head>
+<body>
+<center>
+
+<div class="clrnsve">
+<button class="save">Click To Save</button>
+<button class="clear">Click To Clear</button>
+</div>
+
+<div class="colors">
+<div onClick="pickThis(this)" class="colorbox" style="background: red"></div>
+<div onClick="pickThis(this)" class="colorbox" style="background: orange"></div>
+<div onClick="pickThis(this)" class="colorbox" style="background: brown"></div>
+<div onClick="pickThis(this)" class="colorbox" style="background: yellow"></div>
+<div onClick="pickThis(this)" class="colorbox" style="background: green"></div>
+<div onClick="pickThis(this)" class="colorbox" style="background: blue"></div>
+<div onClick="pickThis(this)" class="colorbox" style="background: indigo"></div>
+<div onClick="pickThis(this)" class="colorbox" style="background: violet"></div>
+<input class="penSize"type="range" 
+min="5" max="50" step="5" />
+</div>
+
+<div>
+<canvas width="600" height="600"></canvas>
+</div>
+</center>
+<script>
+const save = document.querySelector('.save');
+const clear = document.querySelector('.clear');
+const canvas = document.querySelector('canvas');
+const ctx = canvas.getContext('2d');
+var penSize = document.querySelector('.penSize');
+let lineColor = 'black';
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+canvas.addEventListener('mousedown', (e)=>{
+    isDrawing = true;
+    ctx.lineWidth = penSize.value;
+    ctx.strokeStyle = lineColor;
+})
+
+canvas.addEventListener('mouseup', (e)=>{
+    isDrawing = false;
+   
+})
+
+canvas.addEventListener('mousemove', (e)=>{
+    travel(e.offsetX, e.offsetY);
+    origin(e.offsetX, e.offsetY);
+    
+})
+
+function origin(x,y){
+    if(isDrawing){
+        ctx.beginPath();
+        ctx.moveTo(x,y);
+    }else{ctx.moveTo(x,y)}
+}
+function travel(x,y){
+    if(isDrawing){
+        ctx.lineTo(x,y);
+        ctx.stroke();
+        ctx.lineCap="round";
+        
+        
+    }
+}
+function pickThis(element){
+    lineColor = element.style.background;
+}
+clear.addEventListener('click',(e)=>{
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+})
+save.addEventListener('click', ()=>{
+    localStorage.setItem('artwork', canvas.toDataURL());
+})
+var img = new Image();
+img.src = localStorage.getItem('artwork');
+img.onload = function(){
+    ctx.drawImage(img, 0, 0);     
+}
+
+</script>
+</body>
+</html>
